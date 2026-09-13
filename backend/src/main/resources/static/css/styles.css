@@ -67,15 +67,85 @@ h1, h2, h3, h4, h5, h6, .brand-font {
   color: var(--accent-gold-light);
 }
 
-.nav-link {
+/* Header Navbar Links */
+.navbar-custom .nav-link,
+.navbar .nav-link {
   color: #cbd5e1 !important;
   font-weight: 500;
   font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link.active,
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: var(--accent-gold-light) !important;
+}
+
+/* Card Header Nav Tabs (Admin Dashboard) */
+.nav-tabs {
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.nav-tabs .nav-link {
+  color: #475569 !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  border: 1px solid transparent !important;
+  border-bottom: none !important;
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+  padding: 0.75rem 1.25rem !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--primary-navy) !important;
+  background: #f8fafc !important;
+  border-color: #e2e8f0 #e2e8f0 transparent !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--primary-navy) !important;
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 #cbd5e1 #ffffff !important;
+  border-top: 3px solid var(--accent-gold) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.04) !important;
+}
+
+.nav-tabs .nav-link i {
+  color: #64748b !important;
+  margin-right: 0.35rem;
   transition: color 0.2s ease;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-tabs .nav-link:hover i,
+.nav-tabs .nav-link.active i {
+  color: var(--accent-gold) !important;
+}
+
+/* Nav Pills (e.g. My Reservations filter tabs) */
+.nav-pills .nav-link {
+  color: #475569 !important;
+  background-color: #f1f5f9 !important;
+  font-weight: 600 !important;
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.nav-pills .nav-link:hover {
+  background-color: #e2e8f0 !important;
+  color: var(--primary-navy) !important;
+}
+
+.nav-pills .nav-link.active {
+  background: var(--primary-navy) !important;
   color: #ffffff !important;
+  border-color: var(--primary-navy) !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2) !important;
 }
 
 .user-avatar-badge {
