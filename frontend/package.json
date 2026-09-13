@@ -1,0 +1,13 @@
+{
+  "name": "hotel-reservation-frontend",
+  "version": "1.0.0",
+  "description": "Enterprise Hotel Reservation System Frontend Client",
+  "scripts": {
+    "build": "npx esbuild src/pages/*.ts --bundle --outdir=dist/pages --format=esm",
+    "watch": "npx esbuild src/pages/*.ts --bundle --outdir=dist/pages --format=esm --watch"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
