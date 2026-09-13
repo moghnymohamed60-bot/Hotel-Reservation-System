@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -24,6 +25,9 @@ public class DataInitializer implements CommandLineRunner {
     private final RoomRepository roomRepository;
     private final ReservationRepository reservationRepository;
     private final PaymentRepository paymentRepository;
+    private final ExpenseRepository expenseRepository;
+    private final AuditLogRepository auditLogRepository;
+    private final SystemAlertRepository systemAlertRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -33,6 +37,9 @@ public class DataInitializer implements CommandLineRunner {
             RoomRepository roomRepository,
             ReservationRepository reservationRepository,
             PaymentRepository paymentRepository,
+            ExpenseRepository expenseRepository,
+            AuditLogRepository auditLogRepository,
+            SystemAlertRepository systemAlertRepository,
             PasswordEncoder passwordEncoder
     ) {
         this.userRepository = userRepository;
@@ -40,6 +47,9 @@ public class DataInitializer implements CommandLineRunner {
         this.roomRepository = roomRepository;
         this.reservationRepository = reservationRepository;
         this.paymentRepository = paymentRepository;
+        this.expenseRepository = expenseRepository;
+        this.auditLogRepository = auditLogRepository;
+        this.systemAlertRepository = systemAlertRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -50,37 +60,87 @@ public class DataInitializer implements CommandLineRunner {
             return;
         }
 
-        logger.info("Seeding realistic production demo data...");
+        logger.info("Seeding realistic enterprise production demo data...");
 
         String defaultEncodedPassword = passwordEncoder.encode("password123");
 
-        // 1. Seed Users (1 Admin, 2 Staff, 7 Customers)
+        // 1. Seed Executive and Staff Users
         User admin = User.builder()
                 .firstName("System")
                 .lastName("Administrator")
                 .email("admin@grandhotel.com")
                 .password(defaultEncodedPassword)
-                .phoneNumber("+1-555-0100")
+                .phoneNumber("+1 212 555 0100")
                 .role(Role.ADMIN)
+                .accountStatus(AccountStatus.ACTIVE)
+                .build();
+
+        User ceo = User.builder()
+                .firstName("Alexander")
+                .lastName("Sterling")
+                .email("ceo@grandhotel.com")
+                .password(defaultEncodedPassword)
+                .phoneNumber("+1 212 555 0101")
+                .role(Role.CEO)
+                .accountStatus(AccountStatus.ACTIVE)
+                .build();
+
+        User cfo = User.builder()
+                .firstName("Victoria")
+                .lastName("Vance")
+                .email("cfo@grandhotel.com")
+                .password(defaultEncodedPassword)
+                .phoneNumber("+1 212 555 0102")
+                .role(Role.CFO)
+                .accountStatus(AccountStatus.ACTIVE)
+                .build();
+
+        User accountant = User.builder()
+                .firstName("Marcus")
+                .lastName("Brooke")
+                .email("accountant@grandhotel.com")
+                .password(defaultEncodedPassword)
+                .phoneNumber("+1 212 555 0103")
+                .role(Role.ACCOUNTANT)
+                .accountStatus(AccountStatus.ACTIVE)
+                .build();
+
+        User coo = User.builder()
+                .firstName("David")
+                .lastName("Mercer")
+                .email("coo@grandhotel.com")
+                .password(defaultEncodedPassword)
+                .phoneNumber("+1 212 555 0104")
+                .role(Role.COO)
+                .accountStatus(AccountStatus.ACTIVE)
+                .build();
+
+        User cmo = User.builder()
+                .firstName("Elena")
+                .lastName("Rostova")
+                .email("cmo@grandhotel.com")
+                .password(defaultEncodedPassword)
+                .phoneNumber("+1 212 555 0105")
+                .role(Role.CMO)
+                .accountStatus(AccountStatus.ACTIVE)
+                .build();
+
+        User cto = User.builder()
+                .firstName("Julian")
+                .lastName("Hayes")
+                .email("cto@grandhotel.com")
+                .password(defaultEncodedPassword)
+                .phoneNumber("+1 212 555 0106")
+                .role(Role.CTO)
                 .accountStatus(AccountStatus.ACTIVE)
                 .build();
 
         User staff1 = User.builder()
                 .firstName("Sarah")
-                .lastName("Jenkins")
+                .lastName("Staff")
                 .email("sarah.staff@grandhotel.com")
                 .password(defaultEncodedPassword)
-                .phoneNumber("+1-555-0101")
-                .role(Role.STAFF)
-                .accountStatus(AccountStatus.ACTIVE)
-                .build();
-
-        User staff2 = User.builder()
-                .firstName("Marcus")
-                .lastName("Vance")
-                .email("marcus.staff@grandhotel.com")
-                .password(defaultEncodedPassword)
-                .phoneNumber("+1-555-0102")
+                .phoneNumber("+1 212 555 0107")
                 .role(Role.STAFF)
                 .accountStatus(AccountStatus.ACTIVE)
                 .build();
@@ -90,7 +150,7 @@ public class DataInitializer implements CommandLineRunner {
                 .lastName("Doe")
                 .email("john.doe@example.com")
                 .password(defaultEncodedPassword)
-                .phoneNumber("+1-555-0201")
+                .phoneNumber("+1 212 555 0108")
                 .role(Role.CUSTOMER)
                 .accountStatus(AccountStatus.ACTIVE)
                 .build();
@@ -100,287 +160,221 @@ public class DataInitializer implements CommandLineRunner {
                 .lastName("Watson")
                 .email("emma.watson@example.com")
                 .password(defaultEncodedPassword)
-                .phoneNumber("+44-770-0900")
+                .phoneNumber("+1 212 555 0109")
                 .role(Role.CUSTOMER)
                 .accountStatus(AccountStatus.ACTIVE)
                 .build();
 
-        User cust3 = User.builder()
-                .firstName("Michael")
-                .lastName("Brown")
-                .email("michael.brown@example.com")
-                .password(defaultEncodedPassword)
-                .phoneNumber("+1-555-0203")
-                .role(Role.CUSTOMER)
-                .accountStatus(AccountStatus.ACTIVE)
-                .build();
+        userRepository.saveAll(List.of(admin, ceo, cfo, accountant, coo, cmo, cto, staff1, cust1, cust2));
 
-        User cust4 = User.builder()
-                .firstName("Sophia")
-                .lastName("Garcia")
-                .email("sophia.garcia@example.com")
-                .password(defaultEncodedPassword)
-                .phoneNumber("+34-600-1122")
-                .role(Role.CUSTOMER)
-                .accountStatus(AccountStatus.ACTIVE)
-                .build();
-
-        User cust5 = User.builder()
-                .firstName("David")
-                .lastName("Kim")
-                .email("david.kim@example.com")
-                .password(defaultEncodedPassword)
-                .phoneNumber("+82-10-5555")
-                .role(Role.CUSTOMER)
-                .accountStatus(AccountStatus.ACTIVE)
-                .build();
-
-        User cust6 = User.builder()
-                .firstName("Elena")
-                .lastName("Rostova")
-                .email("elena.rostova@example.com")
-                .password(defaultEncodedPassword)
-                .phoneNumber("+33-612-3456")
-                .role(Role.CUSTOMER)
-                .accountStatus(AccountStatus.ACTIVE)
-                .build();
-
-        User cust7 = User.builder()
-                .firstName("Lucas")
-                .lastName("Silva")
-                .email("lucas.silva@example.com")
-                .password(defaultEncodedPassword)
-                .phoneNumber("+55-11-9876")
-                .role(Role.CUSTOMER)
-                .accountStatus(AccountStatus.ACTIVE)
-                .build();
-
-        userRepository.saveAll(List.of(admin, staff1, staff2, cust1, cust2, cust3, cust4, cust5, cust6, cust7));
-
-        // 2. Seed 5 Luxury Hotels
-        Hotel h1 = Hotel.builder()
+        // 2. Seed Hotels
+        Hotel hotel1 = Hotel.builder()
                 .name("The Manhattan Grand Luxury Hotel")
-                .description("Iconic 5-star skyscraper hotel offering breathtaking panoramic views of Central Park, Michelin-starred dining, spa, and world-class concierge services in Midtown Manhattan.")
-                .address("768 5th Ave")
+                .description("Iconic 5-star flagship hotel located in the heart of Midtown Manhattan.")
+                .address("768 5th Ave, Central Park South")
                 .city("New York")
                 .country("United States")
-                .phoneNumber("+1-212-555-0199")
-                .email("concierge.nyc@grandhotel.com")
+                .phoneNumber("+1 (212) 759-3000")
+                .email("reservations@manhattangrand.com")
                 .starRating(5)
-                .checkInTime("15:00")
-                .checkOutTime("11:00")
                 .imageUrl("https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=80")
-                .amenities("Free High-Speed WiFi, Central Park Views, Luxury Spa, Michelin Star Restaurant, Valet Parking, Rooftop Lounge, 24/7 Room Service")
                 .build();
 
-        Hotel h2 = Hotel.builder()
-                .name("Le Palais Royale Boutique & Spa")
-                .description("Elegant Parisian palace with classical Haussmann architecture, private manicured courtyard gardens, luxury suites, and steps away from the Champs-Élysées.")
-                .address("25 Rue de Rivoli")
+        Hotel hotel2 = Hotel.builder()
+                .name("The Beverly Hills Oasis Resort")
+                .description("Legendary palace hotel surrounded by tropical gardens and world-renowned dining.")
+                .address("9641 Sunset Blvd")
+                .city("Los Angeles")
+                .country("United States")
+                .phoneNumber("+1 (310) 276-2251")
+                .email("concierge@beverlyhillsoasis.com")
+                .starRating(5)
+                .imageUrl("https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1200&q=80")
+                .build();
+
+        Hotel hotel3 = Hotel.builder()
+                .name("The Ritz Paris Experience")
+                .description("Timeless Parisian elegance with Belle Époque suites and Michelin-starred dining.")
+                .address("15 Place Vendôme")
                 .city("Paris")
                 .country("France")
-                .phoneNumber("+33-1-4268-5500")
-                .email("contact@lepalaisparis.fr")
+                .phoneNumber("+33 1 43 16 30 30")
+                .email("info@ritzparis.com")
                 .starRating(5)
-                .checkInTime("14:00")
-                .checkOutTime("12:00")
-                .imageUrl("https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1200&q=80")
-                .amenities("Free WiFi, Gourmet French Bakery, Courtyard Garden, Luxury Marble Bath, Airport Chauffeur, Champagne Bar, Heated Indoor Pool")
-                .build();
-
-        Hotel h3 = Hotel.builder()
-                .name("Tokyo Imperial Skyline Resort")
-                .description("Futuristic architectural sanctuary in Shinjuku overlooking Mount Fuji and the Tokyo skyline, featuring authentic onsen hot springs and tea ceremonies.")
-                .address("2-8-1 Nishi-Shinjuku")
-                .city("Tokyo")
-                .country("Japan")
-                .phoneNumber("+81-3-3344-0111")
-                .email("stay@tokyoimperialskyline.jp")
-                .starRating(5)
-                .checkInTime("15:00")
-                .checkOutTime("11:00")
                 .imageUrl("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80")
-                .amenities("Free Ultra-Fast WiFi, Traditional Japanese Onsen, Mount Fuji View Terraces, Kaiseki Dining, Smart Room Automation")
                 .build();
 
-        Hotel h4 = Hotel.builder()
-                .name("The Palm Oasis Marina Beach Resort")
-                .description("Opulent beachfront oasis along the Arabian Gulf featuring private cabanas, infinity pools, submarine dining experiences, and gold-leaf architectural grandeur.")
-                .address("Jumeirah Beach Road")
-                .city("Dubai")
-                .country("United Arab Emirates")
-                .phoneNumber("+971-4-888-3444")
-                .email("reservations@palmoasisdubai.ae")
+        Hotel hotel4 = Hotel.builder()
+                .name("Alpine Grand Lodge & Chalet")
+                .description("Ski-in ski-out luxury mountain lodge offering private chalets and thermal spas.")
+                .address("Via Serlas 27")
+                .city("St. Moritz")
+                .country("Switzerland")
+                .phoneNumber("+41 81 837 10 00")
                 .starRating(5)
-                .checkInTime("14:00")
-                .checkOutTime("12:00")
+                .email("chalet@alpinelodge.ch")
                 .imageUrl("https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80")
-                .amenities("Private White Sand Beach, Infinity Lagoon Pools, Helipad, Luxury Yacht Charters, Kids Club, Butler Service")
                 .build();
 
-        Hotel h5 = Hotel.builder()
-                .name("Villa Borghese Renaissance Heritage")
-                .description("Historic Roman villa converted into an intimate boutique hotel near the Spanish Steps, featuring antique fresco ceilings and panoramic rooftop sunset views.")
-                .address("Via Veneto 125")
-                .city("Rome")
-                .country("Italy")
-                .phoneNumber("+39-06-6992-3300")
-                .email("welcome@villaborgheserome.it")
-                .starRating(4)
-                .checkInTime("14:00")
-                .checkOutTime("11:00")
+        Hotel hotel5 = Hotel.builder()
+                .name("Overwater Villa & Spa Maldives")
+                .description("Exclusive private island retreat featuring overwater bungalows and marine sanctuary.")
+                .address("Baa Atoll Island")
+                .city("Malé")
+                .country("Maldives")
+                .phoneNumber("+960 660-0888")
+                .email("island@overwatervillas.mv")
+                .starRating(5)
                 .imageUrl("https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80")
-                .amenities("Free WiFi, Sunset Rooftop Terrace, Sommelier Wine Tastings, Historic Architecture, Pet Friendly, Vespa Rentals")
                 .build();
 
-        hotelRepository.saveAll(List.of(h1, h2, h3, h4, h5));
+        hotelRepository.saveAll(List.of(hotel1, hotel2, hotel3, hotel4, hotel5));
 
         // 3. Seed Rooms
-        Room r1 = Room.builder().hotel(h1).roomNumber("101").roomType(RoomType.SINGLE).pricePerNight(new BigDecimal("180.00")).capacity(1).floor(1).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800&q=80").description("Cozy executive single room with plush queen bed, ergonomic workspace, and city skyline views.").build();
-        Room r2 = Room.builder().hotel(h1).roomNumber("205").roomType(RoomType.DOUBLE).pricePerNight(new BigDecimal("260.00")).capacity(2).floor(2).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80").description("Spacious double room with king-size bed, luxury linen, marble bath, and Central Park glimpses.").build();
-        Room r3 = Room.builder().hotel(h1).roomNumber("310").roomType(RoomType.DELUXE).pricePerNight(new BigDecimal("380.00")).capacity(3).floor(3).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80").description("Deluxe park-view room with king bed, convertible sofa, walk-in closet, and private balcony.").build();
-        Room r4 = Room.builder().hotel(h1).roomNumber("401").roomType(RoomType.SUITE).pricePerNight(new BigDecimal("650.00")).capacity(4).floor(4).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80").description("Presidential Penthouse Suite with master bedroom, separate living room, dining area, and 24/7 butler.").build();
-        Room r5 = Room.builder().hotel(h1).roomNumber("502").roomType(RoomType.FAMILY).pricePerNight(new BigDecimal("420.00")).capacity(5).floor(5).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80").description("Interconnected 2-bedroom family suite with two queen beds and one twin bed, plus gaming console.").build();
+        Room r1 = Room.builder().hotel(hotel1).roomNumber("101").roomType(RoomType.SINGLE).pricePerNight(BigDecimal.valueOf(180.00)).capacity(1).floor(1).description("Classic Single Room").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80").build();
+        Room r2 = Room.builder().hotel(hotel1).roomNumber("102").roomType(RoomType.DOUBLE).pricePerNight(BigDecimal.valueOf(260.00)).capacity(2).floor(1).description("Deluxe City Double").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80").build();
+        Room r3 = Room.builder().hotel(hotel1).roomNumber("201").roomType(RoomType.SUITE).pricePerNight(BigDecimal.valueOf(450.00)).capacity(3).floor(2).description("Executive Park Suite").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80").build();
+        Room r4 = Room.builder().hotel(hotel1).roomNumber("301").roomType(RoomType.DELUXE).pricePerNight(BigDecimal.valueOf(650.00)).capacity(4).floor(3).description("Grand Luxury Deluxe Suite").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80").build();
+        Room r5 = Room.builder().hotel(hotel1).roomNumber("PH1").roomType(RoomType.SUITE).pricePerNight(BigDecimal.valueOf(1500.00)).capacity(6).floor(10).description("Presidential Skyline Penthouse").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80").build();
 
-        Room r6 = Room.builder().hotel(h2).roomNumber("P-101").roomType(RoomType.SINGLE).pricePerNight(new BigDecimal("210.00")).capacity(1).floor(1).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=800&q=80").description("Chic Parisian single studio with antique wooden furnishings and street cafe views.").build();
-        Room r7 = Room.builder().hotel(h2).roomNumber("P-202").roomType(RoomType.DOUBLE).pricePerNight(new BigDecimal("320.00")).capacity(2).floor(2).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=800&q=80").description("Romantic Parisian double with velvet accents, wrought-iron balcony, and garden views.").build();
-        Room r8 = Room.builder().hotel(h2).roomNumber("P-305").roomType(RoomType.TWIN).pricePerNight(new BigDecimal("290.00")).capacity(2).floor(3).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80").description("Elegant twin room with two plush single beds, art deco lighting, and courtyard silence.").build();
-        Room r9 = Room.builder().hotel(h2).roomNumber("P-401").roomType(RoomType.DELUXE).pricePerNight(new BigDecimal("450.00")).capacity(3).floor(4).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80").description("Grand deluxe room with Eiffel Tower horizon views, fireplace, and lounge seating.").build();
-        Room r10 = Room.builder().hotel(h2).roomNumber("P-501").roomType(RoomType.SUITE).pricePerNight(new BigDecimal("750.00")).capacity(4).floor(5).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&w=800&q=80").description("Palatial Royal Suite with antique chandeliers, private salon, and panoramic city vistas.").build();
+        Room r6 = Room.builder().hotel(hotel2).roomNumber("101").roomType(RoomType.DOUBLE).pricePerNight(BigDecimal.valueOf(320.00)).capacity(2).floor(1).description("Garden View King Room").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80").build();
+        Room r7 = Room.builder().hotel(hotel2).roomNumber("201").roomType(RoomType.SUITE).pricePerNight(BigDecimal.valueOf(550.00)).capacity(4).floor(2).description("Palm Suite with Terrace").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80").build();
 
-        Room r11 = Room.builder().hotel(h3).roomNumber("T-110").roomType(RoomType.SINGLE).pricePerNight(new BigDecimal("160.00")).capacity(1).floor(1).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=800&q=80").description("Minimalist Japanese zen single room with tatami touches and smart electronic controls.").build();
-        Room r12 = Room.builder().hotel(h3).roomNumber("T-215").roomType(RoomType.DOUBLE).pricePerNight(new BigDecimal("250.00")).capacity(2).floor(2).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80").description("Modern Japanese double room overlooking the neon skyline of Shinjuku.").build();
-        Room r13 = Room.builder().hotel(h3).roomNumber("T-320").roomType(RoomType.TWIN).pricePerNight(new BigDecimal("270.00")).capacity(2).floor(3).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80").description("Tranquil twin room designed for serene relaxation with organic linens and aromatherapy.").build();
-        Room r14 = Room.builder().hotel(h3).roomNumber("T-405").roomType(RoomType.DELUXE).pricePerNight(new BigDecimal("410.00")).capacity(3).floor(4).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80").description("Deluxe Fuji View room with private Hinoki cedar wood soaking tub and tatami lounge.").build();
-        Room r15 = Room.builder().hotel(h3).roomNumber("T-501").roomType(RoomType.SUITE).pricePerNight(new BigDecimal("680.00")).capacity(4).floor(5).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80").description("Imperial Skyline Penthouse with 360-degree glass walls and private meditation chamber.").build();
+        Room r8 = Room.builder().hotel(hotel3).roomNumber("101").roomType(RoomType.DELUXE).pricePerNight(BigDecimal.valueOf(750.00)).capacity(2).floor(1).description("Place Vendôme Prestige Room").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80").build();
+        Room r9 = Room.builder().hotel(hotel4).roomNumber("101").roomType(RoomType.SUITE).pricePerNight(BigDecimal.valueOf(620.00)).capacity(4).floor(1).description("Alpine Panorama Suite").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80").build();
+        Room r10 = Room.builder().hotel(hotel5).roomNumber("OV1").roomType(RoomType.SUITE).pricePerNight(BigDecimal.valueOf(1800.00)).capacity(4).floor(1).description("Lagoon Overwater Villa").status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80").build();
 
-        Room r16 = Room.builder().hotel(h4).roomNumber("D-101").roomType(RoomType.DOUBLE).pricePerNight(new BigDecimal("310.00")).capacity(2).floor(1).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80").description("Beachside luxury double room with direct access to private marina and lagoon pools.").build();
-        Room r17 = Room.builder().hotel(h4).roomNumber("D-202").roomType(RoomType.DELUXE).pricePerNight(new BigDecimal("490.00")).capacity(3).floor(2).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80").description("Deluxe ocean-front room with crystal chandelier, gold fixtures, and sunset terrace.").build();
-        Room r18 = Room.builder().hotel(h4).roomNumber("D-303").roomType(RoomType.SUITE).pricePerNight(new BigDecimal("890.00")).capacity(4).floor(3).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=800&q=80").description("Palatial Arabian Suite with private plunge pool, dining room, and 24-hour private chauffeur.").build();
-        Room r19 = Room.builder().hotel(h4).roomNumber("D-404").roomType(RoomType.FAMILY).pricePerNight(new BigDecimal("580.00")).capacity(5).floor(4).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80").description("Grand family villa suite with kids themed playroom and sunbathing terrace.").build();
-        Room r20 = Room.builder().hotel(h4).roomNumber("D-505").roomType(RoomType.TWIN).pricePerNight(new BigDecimal("340.00")).capacity(2).floor(5).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80").description("High-floor twin room with marina skyline and mega-yacht harbor views.").build();
+        roomRepository.saveAll(List.of(r1, r2, r3, r4, r5, r6, r7, r8, r9, r10));
 
-        Room r21 = Room.builder().hotel(h5).roomNumber("R-101").roomType(RoomType.SINGLE).pricePerNight(new BigDecimal("150.00")).capacity(1).floor(1).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800&q=80").description("Charming classic single with terracotta tiles, high ceilings, and garden outlook.").build();
-        Room r22 = Room.builder().hotel(h5).roomNumber("R-202").roomType(RoomType.DOUBLE).pricePerNight(new BigDecimal("240.00")).capacity(2).floor(2).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=800&q=80").description("Renaissance style double room with restored fresco wall accents and king bed.").build();
-        Room r23 = Room.builder().hotel(h5).roomNumber("R-303").roomType(RoomType.DELUXE).pricePerNight(new BigDecimal("360.00")).capacity(3).floor(3).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80").description("Deluxe Roman rooftop suite with private terrace and view of St. Peter’s Basilica dome.").build();
-        Room r24 = Room.builder().hotel(h5).roomNumber("R-404").roomType(RoomType.TWIN).pricePerNight(new BigDecimal("230.00")).capacity(2).floor(4).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80").description("Comfortable twin room decorated with classical Italian artwork and warm timber.").build();
-        Room r25 = Room.builder().hotel(h5).roomNumber("R-505").roomType(RoomType.FAMILY).pricePerNight(new BigDecimal("410.00")).capacity(4).floor(5).status(RoomStatus.AVAILABLE).imageUrl("https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&w=800&q=80").description("Spacious Roman apartment-style suite with 2 bedrooms and kitchen area.").build();
-
-        roomRepository.saveAll(List.of(
-                r1, r2, r3, r4, r5, r6, r7, r8, r9, r10,
-                r11, r12, r13, r14, r15, r16, r17, r18, r19, r20,
-                r21, r22, r23, r24, r25
-        ));
-
-        // 4. Seed Reservations & Payments
+        // 4. Seed Multi-Channel Historical Reservations & Payments
         Reservation res1 = Reservation.builder()
-                .reservationCode("HTL-2026-100001")
+                .reservationCode("HTL-2026-100101")
                 .user(cust1)
-                .room(r1)
-                .checkInDate(LocalDate.of(2026, 8, 1))
-                .checkOutDate(LocalDate.of(2026, 8, 5))
-                .numberOfGuests(1)
-                .totalPrice(new BigDecimal("720.00"))
+                .room(r3)
+                .checkInDate(LocalDate.now().minusDays(20))
+                .checkOutDate(LocalDate.now().minusDays(16))
+                .numberOfGuests(2)
+                .totalPrice(BigDecimal.valueOf(1800.00))
+                .addOnRevenue(BigDecimal.valueOf(250.00))
+                .bookingChannel(BookingChannel.DIRECT_WEBSITE)
                 .reservationStatus(ReservationStatus.COMPLETED)
-                .specialRequests("Early check-in requested.")
+                .specialRequests("Late check-in requested")
                 .build();
-        reservationRepository.save(res1);
-
-        Payment pay1 = Payment.builder()
-                .reservation(res1)
-                .amount(new BigDecimal("720.00"))
-                .paymentStatus(PaymentStatus.PAID)
-                .paymentMethod(PaymentMethod.CARD)
-                .transactionReference("TXN-CARD-20260801-001")
-                .build();
-        paymentRepository.save(pay1);
+        Payment p1 = Payment.builder().reservation(res1).amount(BigDecimal.valueOf(2050.00)).gatewayFee(BigDecimal.valueOf(59.45)).refundAmount(BigDecimal.ZERO).paymentStatus(PaymentStatus.PAID).paymentMethod(PaymentMethod.CARD).transactionReference("TXN-CARD-2026-001").build();
+        res1.setPayment(p1);
 
         Reservation res2 = Reservation.builder()
-                .reservationCode("HTL-2026-100002")
-                .user(cust1)
-                .room(r2)
-                .checkInDate(LocalDate.of(2026, 10, 10))
-                .checkOutDate(LocalDate.of(2026, 10, 15))
-                .numberOfGuests(2)
-                .totalPrice(new BigDecimal("1300.00"))
-                .reservationStatus(ReservationStatus.CONFIRMED)
-                .specialRequests("Anniversary setup with flowers.")
+                .reservationCode("HTL-2026-100102")
+                .user(cust2)
+                .room(r5)
+                .checkInDate(LocalDate.now().minusDays(15))
+                .checkOutDate(LocalDate.now().minusDays(12))
+                .numberOfGuests(4)
+                .totalPrice(BigDecimal.valueOf(4500.00))
+                .addOnRevenue(BigDecimal.valueOf(600.00))
+                .bookingChannel(BookingChannel.BOOKING_COM)
+                .reservationStatus(ReservationStatus.COMPLETED)
+                .specialRequests("VIP arrival amenities")
                 .build();
-        reservationRepository.save(res2);
-
-        Payment pay2 = Payment.builder()
-                .reservation(res2)
-                .amount(new BigDecimal("1300.00"))
-                .paymentStatus(PaymentStatus.PAID)
-                .paymentMethod(PaymentMethod.ONLINE)
-                .transactionReference("TXN-ONL-20260901-002")
-                .build();
-        paymentRepository.save(pay2);
+        Payment p2 = Payment.builder().reservation(res2).amount(BigDecimal.valueOf(5100.00)).gatewayFee(BigDecimal.valueOf(147.90)).refundAmount(BigDecimal.ZERO).paymentStatus(PaymentStatus.PAID).paymentMethod(PaymentMethod.ONLINE).transactionReference("TXN-ONL-2026-002").build();
+        res2.setPayment(p2);
 
         Reservation res3 = Reservation.builder()
-                .reservationCode("HTL-2026-100003")
-                .user(cust2)
-                .room(r7)
-                .checkInDate(LocalDate.of(2026, 10, 12))
-                .checkOutDate(LocalDate.of(2026, 10, 16))
+                .reservationCode("HTL-2026-100103")
+                .user(cust1)
+                .room(r8)
+                .checkInDate(LocalDate.now().minusDays(8))
+                .checkOutDate(LocalDate.now().minusDays(4))
                 .numberOfGuests(2)
-                .totalPrice(new BigDecimal("1280.00"))
-                .reservationStatus(ReservationStatus.CONFIRMED)
-                .specialRequests("High floor preferred.")
+                .totalPrice(BigDecimal.valueOf(3000.00))
+                .addOnRevenue(BigDecimal.valueOf(350.00))
+                .bookingChannel(BookingChannel.AIRBNB)
+                .reservationStatus(ReservationStatus.COMPLETED)
                 .build();
-        reservationRepository.save(res3);
-
-        Payment pay3 = Payment.builder()
-                .reservation(res3)
-                .amount(new BigDecimal("1280.00"))
-                .paymentStatus(PaymentStatus.PAID)
-                .paymentMethod(PaymentMethod.CARD)
-                .transactionReference("TXN-CARD-20260902-003")
-                .build();
-        paymentRepository.save(pay3);
+        Payment p3 = Payment.builder().reservation(res3).amount(BigDecimal.valueOf(3350.00)).gatewayFee(BigDecimal.valueOf(97.15)).refundAmount(BigDecimal.ZERO).paymentStatus(PaymentStatus.PAID).paymentMethod(PaymentMethod.CARD).transactionReference("TXN-CARD-2026-003").build();
+        res3.setPayment(p3);
 
         Reservation res4 = Reservation.builder()
-                .reservationCode("HTL-2026-100004")
-                .user(cust3)
-                .room(r12)
-                .checkInDate(LocalDate.of(2026, 11, 1))
-                .checkOutDate(LocalDate.of(2026, 11, 6))
+                .reservationCode("HTL-2026-100104")
+                .user(cust2)
+                .room(r10)
+                .checkInDate(LocalDate.now().minusDays(3))
+                .checkOutDate(LocalDate.now().plusDays(2))
                 .numberOfGuests(2)
-                .totalPrice(new BigDecimal("1250.00"))
+                .totalPrice(BigDecimal.valueOf(9000.00))
+                .addOnRevenue(BigDecimal.valueOf(1200.00))
+                .bookingChannel(BookingChannel.EXPEDIA)
                 .reservationStatus(ReservationStatus.CONFIRMED)
+                .specialRequests("Honeymoon package setup")
                 .build();
-        reservationRepository.save(res4);
-
-        Payment pay4 = Payment.builder()
-                .reservation(res4)
-                .amount(new BigDecimal("1250.00"))
-                .paymentStatus(PaymentStatus.PAID)
-                .paymentMethod(PaymentMethod.ONLINE)
-                .transactionReference("TXN-ONL-20260903-004")
-                .build();
-        paymentRepository.save(pay4);
+        Payment p4 = Payment.builder().reservation(res4).amount(BigDecimal.valueOf(10200.00)).gatewayFee(BigDecimal.valueOf(295.80)).refundAmount(BigDecimal.ZERO).paymentStatus(PaymentStatus.PAID).paymentMethod(PaymentMethod.CARD).transactionReference("TXN-CARD-2026-004").build();
+        res4.setPayment(p4);
 
         Reservation res5 = Reservation.builder()
-                .reservationCode("HTL-2026-100005")
-                .user(cust4)
-                .room(r18)
-                .checkInDate(LocalDate.of(2026, 12, 20))
-                .checkOutDate(LocalDate.of(2026, 12, 27))
-                .numberOfGuests(4)
-                .totalPrice(new BigDecimal("6230.00"))
+                .reservationCode("HTL-2026-100105")
+                .user(cust1)
+                .room(r4)
+                .checkInDate(LocalDate.now().plusDays(5))
+                .checkOutDate(LocalDate.now().plusDays(9))
+                .numberOfGuests(2)
+                .totalPrice(BigDecimal.valueOf(2600.00))
+                .addOnRevenue(BigDecimal.valueOf(180.00))
+                .bookingChannel(BookingChannel.DIRECT_WEBSITE)
                 .reservationStatus(ReservationStatus.CONFIRMED)
                 .build();
-        reservationRepository.save(res5);
+        Payment p5 = Payment.builder().reservation(res5).amount(BigDecimal.valueOf(2780.00)).gatewayFee(BigDecimal.valueOf(80.62)).refundAmount(BigDecimal.ZERO).paymentStatus(PaymentStatus.PAID).paymentMethod(PaymentMethod.ONLINE).transactionReference("TXN-ONL-2026-005").build();
+        res5.setPayment(p5);
 
-        Payment pay5 = Payment.builder()
-                .reservation(res5)
-                .amount(new BigDecimal("6230.00"))
-                .paymentStatus(PaymentStatus.PAID)
-                .paymentMethod(PaymentMethod.CARD)
-                .transactionReference("TXN-CARD-20260904-005")
+        Reservation res6 = Reservation.builder()
+                .reservationCode("HTL-2026-100106")
+                .user(cust2)
+                .room(r2)
+                .checkInDate(LocalDate.now().minusDays(10))
+                .checkOutDate(LocalDate.now().minusDays(8))
+                .numberOfGuests(2)
+                .totalPrice(BigDecimal.valueOf(520.00))
+                .addOnRevenue(BigDecimal.ZERO)
+                .bookingChannel(BookingChannel.BOOKING_COM)
+                .reservationStatus(ReservationStatus.CANCELLED)
+                .specialRequests("Guest flight cancelled")
                 .build();
-        paymentRepository.save(pay5);
+        Payment p6 = Payment.builder().reservation(res6).amount(BigDecimal.valueOf(520.00)).gatewayFee(BigDecimal.valueOf(15.08)).refundAmount(BigDecimal.valueOf(520.00)).paymentStatus(PaymentStatus.REFUNDED).paymentMethod(PaymentMethod.CARD).transactionReference("TXN-REF-2026-006").build();
+        res6.setPayment(p6);
 
-        logger.info("Demo data seeding completed successfully! Ready for production testing.");
+        reservationRepository.saveAll(List.of(res1, res2, res3, res4, res5, res6));
+
+        // 5. Seed Realistic Categorized Expenses
+        Expense exp1 = Expense.builder().category(ExpenseCategory.FIXED_COST).department("Administration").description("Executive & Staff Payroll (Monthly)").amount(BigDecimal.valueOf(8500.00)).paymentMethod(PaymentMethod.BANK_TRANSFER).vendor("ADP Payroll Services").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(15)).createdBy("cfo@grandhotel.com").approvedBy("ceo@grandhotel.com").build();
+        Expense exp2 = Expense.builder().category(ExpenseCategory.FIXED_COST).department("Facilities").description("Property Insurance & Premium Coverage").amount(BigDecimal.valueOf(2200.00)).paymentMethod(PaymentMethod.BANK_TRANSFER).vendor("Chubb Commercial Insurance").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(20)).createdBy("cfo@grandhotel.com").approvedBy("ceo@grandhotel.com").build();
+        Expense exp3 = Expense.builder().category(ExpenseCategory.FIXED_COST).department("IT & Systems").description("Oracle Hospitality PMS & Cloud Infrastructure").amount(BigDecimal.valueOf(1450.00)).paymentMethod(PaymentMethod.CARD).vendor("Oracle Cloud Systems").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(12)).createdBy("cto@grandhotel.com").approvedBy("cfo@grandhotel.com").build();
+
+        Expense exp4 = Expense.builder().category(ExpenseCategory.VARIABLE_COST).department("Housekeeping").description("Eco-Luxury Linen, Robes & Towel Replenishment").amount(BigDecimal.valueOf(1850.00)).paymentMethod(PaymentMethod.CARD).vendor("Frette Hospitality Group").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(18)).createdBy("coo@grandhotel.com").approvedBy("cfo@grandhotel.com").build();
+        Expense exp5 = Expense.builder().category(ExpenseCategory.VARIABLE_COST).department("Food & Beverage").description("Gourmet Continental Breakfast & Caviar Restock").amount(BigDecimal.valueOf(2400.00)).paymentMethod(PaymentMethod.CARD).vendor("Sysco Gourmet Foods").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(8)).createdBy("coo@grandhotel.com").approvedBy("cfo@grandhotel.com").build();
+        Expense exp6 = Expense.builder().category(ExpenseCategory.VARIABLE_COST).department("Facilities").description("Monthly Electricity, Water & Thermal Heating").amount(BigDecimal.valueOf(3100.00)).paymentMethod(PaymentMethod.BANK_TRANSFER).vendor("ConEdison Commercial").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(5)).createdBy("coo@grandhotel.com").approvedBy("cfo@grandhotel.com").build();
+
+        Expense exp7 = Expense.builder().category(ExpenseCategory.SALES_MARKETING).department("Marketing").description("Google Performance Max & Search Ads").amount(BigDecimal.valueOf(1900.00)).paymentMethod(PaymentMethod.CARD).vendor("Google Ads LLC").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(14)).createdBy("cmo@grandhotel.com").approvedBy("cfo@grandhotel.com").build();
+        Expense exp8 = Expense.builder().category(ExpenseCategory.SALES_MARKETING).department("Marketing").description("Summer Luxury Escape Influencer Campaign").amount(BigDecimal.valueOf(1300.00)).paymentMethod(PaymentMethod.CARD).vendor("Meta Ad Network").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(7)).createdBy("cmo@grandhotel.com").approvedBy("cfo@grandhotel.com").build();
+
+        Expense exp9 = Expense.builder().category(ExpenseCategory.FINANCIAL_COST).department("Finance").description("Merchant Payment Terminal Lease & Compliance Fee").amount(BigDecimal.valueOf(380.00)).paymentMethod(PaymentMethod.CARD).vendor("Stripe Terminal Global").status(ExpenseStatus.PAID).expenseDate(LocalDate.now().minusDays(10)).createdBy("accountant@grandhotel.com").approvedBy("cfo@grandhotel.com").build();
+
+        Expense exp10 = Expense.builder().category(ExpenseCategory.OTHER).department("Operations").description("Annual Fire Safety Inspection & Certification").amount(BigDecimal.valueOf(650.00)).paymentMethod(PaymentMethod.CARD).vendor("City Safety Bureau").status(ExpenseStatus.APPROVED).expenseDate(LocalDate.now().minusDays(2)).createdBy("coo@grandhotel.com").approvedBy("cfo@grandhotel.com").build();
+        Expense exp11 = Expense.builder().category(ExpenseCategory.VARIABLE_COST).department("Housekeeping").description("Organic Spa & Botanical Amenities Restock").amount(BigDecimal.valueOf(920.00)).paymentMethod(PaymentMethod.CARD).vendor("Aesop Hospitality").status(ExpenseStatus.PENDING).expenseDate(LocalDate.now().minusDays(1)).createdBy("coo@grandhotel.com").build();
+
+        expenseRepository.saveAll(List.of(exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9, exp10, exp11));
+
+        // 6. Seed Audit Logs
+        AuditLog al1 = AuditLog.builder().userId(ceo.getId()).userEmail("ceo@grandhotel.com").userRole("ROLE_CEO").action("LOGIN").entityName("Auth").entityId("1").ipAddress("192.168.1.10").description("CEO authenticated into Executive Portal").timestamp(LocalDateTime.now().minusHours(4)).build();
+        AuditLog al2 = AuditLog.builder().userId(cfo.getId()).userEmail("cfo@grandhotel.com").userRole("ROLE_CFO").action("APPROVE").entityName("Expense").entityId("1").ipAddress("192.168.1.15").description("CFO approved monthly payroll expense ($8,500.00)").timestamp(LocalDateTime.now().minusHours(3)).build();
+        AuditLog al3 = AuditLog.builder().userId(admin.getId()).userEmail("admin@grandhotel.com").userRole("ROLE_ADMIN").action("CREATE").entityName("Reservation").entityId("HTL-2026-100105").ipAddress("127.0.0.1").description("Created reservation HTL-2026-100105").timestamp(LocalDateTime.now().minusHours(2)).build();
+        AuditLog al4 = AuditLog.builder().userId(accountant.getId()).userEmail("accountant@grandhotel.com").userRole("ROLE_ACCOUNTANT").action("EXPORT").entityName("Report").entityId("P&L").ipAddress("192.168.1.20").description("Generated Monthly P&L CSV statement").timestamp(LocalDateTime.now().minusMinutes(45)).build();
+        auditLogRepository.saveAll(List.of(al1, al2, al3, al4));
+
+        // 7. Seed System & Financial Alerts
+        SystemAlert a1 = SystemAlert.builder().severity(AlertSeverity.INFO).category(AlertCategory.FINANCIAL).title("Record Q3 RevPAR Performance").description("RevPAR increased by 14.2% driven by surge in Penthouse suite bookings.").relatedEntity("Revenue").status("ACTIVE").createdAt(LocalDateTime.now().minusDays(1)).build();
+        SystemAlert a2 = SystemAlert.builder().severity(AlertSeverity.WARNING).category(AlertCategory.OPERATIONAL).title("Elevated Housekeeping Turnaround").description("Average cleaning turnaround exceeded 45 minutes on weekend turnover.").relatedEntity("Operations").status("ACTIVE").createdAt(LocalDateTime.now().minusHours(12)).build();
+        SystemAlert a3 = SystemAlert.builder().severity(AlertSeverity.INFO).category(AlertCategory.SYSTEM).title("Zero Anomaly Financial Verification").description("Automated ledger audit completed with 100% balance reconciliation.").relatedEntity("Treasury").status("RESOLVED").createdAt(LocalDateTime.now().minusHours(6)).build();
+        systemAlertRepository.saveAll(List.of(a1, a2, a3));
+
+        logger.info("Enterprise demo data seeding completed successfully! All executive platforms ready.");
     }
 }

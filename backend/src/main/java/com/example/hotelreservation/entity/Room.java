@@ -103,8 +103,8 @@ public class Room {
         private String roomNumber;
         private RoomType roomType;
         private BigDecimal pricePerNight;
-        private Integer capacity;
-        private Integer floor;
+        private Integer capacity = 2;
+        private Integer floor = 1;
         private String description;
         private RoomStatus status = RoomStatus.AVAILABLE;
         private String imageUrl;

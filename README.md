@@ -44,12 +44,17 @@ A production-grade, enterprise Full-Stack **Hotel Reservation System** built wit
 
 ### 🛎️ Hotel Staff Features
 - **Operations Console**: View active guest reservations, check-in guests, mark stays as completed, and process cancellations.
-- **Room Status Management**: Update room statuses (`AVAILABLE`, `OCCUPIED`, `MAINTENANCE`, `RESERVED`) in real time.
+- **Room Status Management**: Update room statuses (`AVAILABLE`, `OCCUPIED`, `MAINTENANCE`, `CLEANING`, `RESERVED`, `OUT_OF_SERVICE`) in real time.
 
-### 👑 Administrator Features
-- **Executive Analytics Dashboard**: Real-time revenue metrics, total bookings, confirmed/pending counts, occupancy rates, and recent activity logs.
-- **Property & Room Management**: Create, edit, and manage hotels and room inventory across all locations.
-- **User Management**: View and manage customer and staff accounts with RBAC controls.
+### 👑 Executive Management & Enterprise Platform
+- **👑 CEO Overview**: Portfolio revenue velocity, net profit margin, RevPAR, ADR, occupancy index, and dynamic AI Strategic Narrative.
+- **💼 CFO & Finance (P&L)**: Deterministic GAAP Income Statement (Gross revenue, COGS, OPEX, EBITDA, Taxes, Net Profit), Cash Flow ledger, and CSV export.
+- **🧾 Corporate Expense Register**: Multi-stage authorization workflow (`PENDING` ➔ `APPROVED` ➔ `PAID` / `REJECTED`) with categorized allocations (`FIXED_COST`, `VARIABLE_COST`, `SALES_MARKETING`, `FINANCIAL_COST`).
+- **🏨 COO Operations**: Real-time room fleet status matrix, housekeeping turnaround tracking, and 0-100 Operational Health Score.
+- **📈 CMO Marketing**: Direct booking ratio vs OTAs (Booking.com, Airbnb, Expedia), CAC, LTV, and Return on Ad Spend (ROAS).
+- **⚡ CTO Telemetry**: Live JVM heap memory meters, processor/thread pool stats, database latency, payment gateway health, and 99.8% API uptime.
+- **🧠 Aura AI Intelligence Feed**: Autonomous anomaly detection, strategic pricing recommendations, and confidence-scored action items.
+- **🛡️ Audit Logs & Alert Center**: Cryptographically timestamped audit trail and centralized incident resolution desk.
 
 ---
 

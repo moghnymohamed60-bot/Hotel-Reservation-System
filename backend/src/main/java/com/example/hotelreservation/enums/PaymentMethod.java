@@ -3,5 +3,6 @@ package com.example.hotelreservation.enums;
 public enum PaymentMethod {
     CASH,
     CARD,
-    ONLINE
+    ONLINE,
+    BANK_TRANSFER
 }

@@ -129,16 +129,16 @@ public class SecurityConfig {
                                 "/h2-console/**"
                         ).permitAll()
 
-                        // Admin Only Endpoints
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/hotels/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/hotels/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/hotels/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/rooms/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasRole("ADMIN")
+                        // Admin & Executive Endpoints
+                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "CEO", "CFO", "ACCOUNTANT", "COO", "CMO", "CTO", "MANAGER", "STAFF")
+                        .requestMatchers(HttpMethod.POST, "/api/hotels/**").hasAnyRole("ADMIN", "CEO")
+                        .requestMatchers(HttpMethod.PUT, "/api/hotels/**").hasAnyRole("ADMIN", "CEO")
+                        .requestMatchers(HttpMethod.DELETE, "/api/hotels/**").hasAnyRole("ADMIN", "CEO")
+                        .requestMatchers(HttpMethod.POST, "/api/rooms/**").hasAnyRole("ADMIN", "CEO", "COO", "STAFF")
+                        .requestMatchers(HttpMethod.DELETE, "/api/rooms/**").hasAnyRole("ADMIN", "CEO")
 
-                        // Staff & Admin Room Management
-                        .requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAnyRole("ADMIN", "STAFF")
+                        // Staff & Executive Room Management
+                        .requestMatchers(HttpMethod.PUT, "/api/rooms/**").hasAnyRole("ADMIN", "CEO", "COO", "STAFF")
 
                         // Reservations & User Endpoints (Customer, Staff, Admin)
                         .requestMatchers("/api/reservations/**").authenticated()

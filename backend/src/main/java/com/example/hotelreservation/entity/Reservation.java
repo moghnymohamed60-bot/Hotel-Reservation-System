@@ -1,5 +1,6 @@
 package com.example.hotelreservation.entity;
 
+import com.example.hotelreservation.enums.BookingChannel;
 import com.example.hotelreservation.enums.ReservationStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -15,7 +16,8 @@ import java.time.LocalDateTime;
     @Index(name = "idx_reservations_user_id", columnList = "user_id"),
     @Index(name = "idx_reservations_room_id", columnList = "room_id"),
     @Index(name = "idx_reservations_status", columnList = "reservation_status"),
-    @Index(name = "idx_reservations_dates", columnList = "room_id, check_in_date, check_out_date, reservation_status")
+    @Index(name = "idx_reservations_dates", columnList = "room_id, check_in_date, check_out_date, reservation_status"),
+    @Index(name = "idx_reservations_channel", columnList = "booking_channel")
 })
 public class Reservation {
 
@@ -46,6 +48,13 @@ public class Reservation {
     @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalPrice;
 
+    @Column(name = "add_on_revenue", nullable = false, precision = 12, scale = 2)
+    private BigDecimal addOnRevenue = BigDecimal.ZERO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "booking_channel", nullable = false, length = 30)
+    private BookingChannel bookingChannel = BookingChannel.DIRECT_WEBSITE;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "reservation_status", nullable = false, length = 20)
     private ReservationStatus reservationStatus = ReservationStatus.PENDING;
@@ -66,7 +75,10 @@ public class Reservation {
 
     public Reservation() {}
 
-    public Reservation(Long id, String reservationCode, User user, Room room, LocalDate checkInDate, LocalDate checkOutDate, Integer numberOfGuests, BigDecimal totalPrice, ReservationStatus reservationStatus, String specialRequests, Payment payment, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Reservation(Long id, String reservationCode, User user, Room room, LocalDate checkInDate, LocalDate checkOutDate,
+                       Integer numberOfGuests, BigDecimal totalPrice, BigDecimal addOnRevenue, BookingChannel bookingChannel,
+                       ReservationStatus reservationStatus, String specialRequests, Payment payment,
+                       LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.reservationCode = reservationCode;
         this.user = user;
@@ -75,6 +87,8 @@ public class Reservation {
         this.checkOutDate = checkOutDate;
         this.numberOfGuests = numberOfGuests;
         this.totalPrice = totalPrice;
+        this.addOnRevenue = addOnRevenue != null ? addOnRevenue : BigDecimal.ZERO;
+        this.bookingChannel = bookingChannel != null ? bookingChannel : BookingChannel.DIRECT_WEBSITE;
         this.reservationStatus = reservationStatus != null ? reservationStatus : ReservationStatus.PENDING;
         this.specialRequests = specialRequests;
         this.payment = payment;
@@ -95,6 +109,8 @@ public class Reservation {
         private LocalDate checkOutDate;
         private Integer numberOfGuests;
         private BigDecimal totalPrice;
+        private BigDecimal addOnRevenue = BigDecimal.ZERO;
+        private BookingChannel bookingChannel = BookingChannel.DIRECT_WEBSITE;
         private ReservationStatus reservationStatus = ReservationStatus.PENDING;
         private String specialRequests;
         private Payment payment;
@@ -109,6 +125,8 @@ public class Reservation {
         public Builder checkOutDate(LocalDate checkOutDate) { this.checkOutDate = checkOutDate; return this; }
         public Builder numberOfGuests(Integer numberOfGuests) { this.numberOfGuests = numberOfGuests; return this; }
         public Builder totalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; return this; }
+        public Builder addOnRevenue(BigDecimal addOnRevenue) { this.addOnRevenue = addOnRevenue; return this; }
+        public Builder bookingChannel(BookingChannel bookingChannel) { this.bookingChannel = bookingChannel; return this; }
         public Builder reservationStatus(ReservationStatus reservationStatus) { this.reservationStatus = reservationStatus; return this; }
         public Builder specialRequests(String specialRequests) { this.specialRequests = specialRequests; return this; }
         public Builder payment(Payment payment) { this.payment = payment; return this; }
@@ -116,7 +134,8 @@ public class Reservation {
         public Builder updatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; return this; }
 
         public Reservation build() {
-            return new Reservation(id, reservationCode, user, room, checkInDate, checkOutDate, numberOfGuests, totalPrice, reservationStatus, specialRequests, payment, createdAt, updatedAt);
+            return new Reservation(id, reservationCode, user, room, checkInDate, checkOutDate, numberOfGuests,
+                    totalPrice, addOnRevenue, bookingChannel, reservationStatus, specialRequests, payment, createdAt, updatedAt);
         }
     }
 
@@ -144,6 +163,12 @@ public class Reservation {
 
     public BigDecimal getTotalPrice() { return totalPrice; }
     public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
+
+    public BigDecimal getAddOnRevenue() { return addOnRevenue; }
+    public void setAddOnRevenue(BigDecimal addOnRevenue) { this.addOnRevenue = addOnRevenue; }
+
+    public BookingChannel getBookingChannel() { return bookingChannel; }
+    public void setBookingChannel(BookingChannel bookingChannel) { this.bookingChannel = bookingChannel; }
 
     public ReservationStatus getReservationStatus() { return reservationStatus; }
     public void setReservationStatus(ReservationStatus reservationStatus) { this.reservationStatus = reservationStatus; }

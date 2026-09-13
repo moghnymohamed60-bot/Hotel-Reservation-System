@@ -27,6 +27,12 @@ public class Payment {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal amount;
 
+    @Column(name = "gateway_fee", nullable = false, precision = 12, scale = 2)
+    private BigDecimal gatewayFee = BigDecimal.ZERO;
+
+    @Column(name = "refund_amount", nullable = false, precision = 12, scale = 2)
+    private BigDecimal refundAmount = BigDecimal.ZERO;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false, length = 20)
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
@@ -44,10 +50,13 @@ public class Payment {
 
     public Payment() {}
 
-    public Payment(Long id, Reservation reservation, BigDecimal amount, PaymentStatus paymentStatus, PaymentMethod paymentMethod, String transactionReference, LocalDateTime createdAt) {
+    public Payment(Long id, Reservation reservation, BigDecimal amount, BigDecimal gatewayFee, BigDecimal refundAmount,
+                   PaymentStatus paymentStatus, PaymentMethod paymentMethod, String transactionReference, LocalDateTime createdAt) {
         this.id = id;
         this.reservation = reservation;
         this.amount = amount;
+        this.gatewayFee = gatewayFee != null ? gatewayFee : BigDecimal.ZERO;
+        this.refundAmount = refundAmount != null ? refundAmount : BigDecimal.ZERO;
         this.paymentStatus = paymentStatus != null ? paymentStatus : PaymentStatus.PENDING;
         this.paymentMethod = paymentMethod;
         this.transactionReference = transactionReference;
@@ -62,6 +71,8 @@ public class Payment {
         private Long id;
         private Reservation reservation;
         private BigDecimal amount;
+        private BigDecimal gatewayFee = BigDecimal.ZERO;
+        private BigDecimal refundAmount = BigDecimal.ZERO;
         private PaymentStatus paymentStatus = PaymentStatus.PENDING;
         private PaymentMethod paymentMethod;
         private String transactionReference;
@@ -70,13 +81,15 @@ public class Payment {
         public Builder id(Long id) { this.id = id; return this; }
         public Builder reservation(Reservation reservation) { this.reservation = reservation; return this; }
         public Builder amount(BigDecimal amount) { this.amount = amount; return this; }
+        public Builder gatewayFee(BigDecimal gatewayFee) { this.gatewayFee = gatewayFee; return this; }
+        public Builder refundAmount(BigDecimal refundAmount) { this.refundAmount = refundAmount; return this; }
         public Builder paymentStatus(PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; return this; }
         public Builder paymentMethod(PaymentMethod paymentMethod) { this.paymentMethod = paymentMethod; return this; }
         public Builder transactionReference(String transactionReference) { this.transactionReference = transactionReference; return this; }
         public Builder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
 
         public Payment build() {
-            return new Payment(id, reservation, amount, paymentStatus, paymentMethod, transactionReference, createdAt);
+            return new Payment(id, reservation, amount, gatewayFee, refundAmount, paymentStatus, paymentMethod, transactionReference, createdAt);
         }
     }
 
@@ -89,6 +102,12 @@ public class Payment {
 
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
+
+    public BigDecimal getGatewayFee() { return gatewayFee; }
+    public void setGatewayFee(BigDecimal gatewayFee) { this.gatewayFee = gatewayFee; }
+
+    public BigDecimal getRefundAmount() { return refundAmount; }
+    public void setRefundAmount(BigDecimal refundAmount) { this.refundAmount = refundAmount; }
 
     public PaymentStatus getPaymentStatus() { return paymentStatus; }
     public void setPaymentStatus(PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; }
