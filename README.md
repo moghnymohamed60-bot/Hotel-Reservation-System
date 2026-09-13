@@ -322,37 +322,33 @@ stateDiagram-v2
 
 ---
 
-### Running the Backend
+### 🚀 Unified Single-Localhost Run (Frontend + Backend Together)
 
-1. Open a terminal in `backend/`:
+The frontend assets are integrated directly into Spring Boot. Running the backend serves **both** the full frontend web application and the REST API from a single port (`8080`):
+
+1. **(Optional) Rebuild Frontend Assets if modified**:
+   ```bash
+   cd frontend
+   npm install
+   npm run build
+   cd ..
+   ```
+
+2. **Start the Unified Application**:
    ```bash
    cd backend
-   ```
-2. Run using the Maven wrapper (starts with development H2 in-memory profile and automatic data seeding):
-   ```bash
+
    # Windows
    .\mvnw.cmd spring-boot:run
 
    # Linux / macOS
    ./mvnw spring-boot:run
    ```
-3. Backend will start at `http://localhost:8080`.
 
----
-
-### Running the Frontend
-
-1. Open a terminal in `frontend/`:
-   ```bash
-   cd frontend
-   npm install
-   npm run build
-   ```
-2. Serve the static client:
-   ```bash
-   npx serve . -l 3000
-   ```
-3. Open `http://localhost:3000` in your web browser.
+3. **Open in Browser**:
+   - 🌐 **Web Application**: [`http://localhost:8080`](http://localhost:8080)
+   - 📖 **Swagger API Docs**: [`http://localhost:8080/swagger-ui.html`](http://localhost:8080/swagger-ui.html)
+   - 🗄️ **H2 Database Console**: [`http://localhost:8080/h2-console`](http://localhost:8080/h2-console) (JDBC URL: `jdbc:h2:mem:hoteldb`, User: `sa`, Password: *(blank)*)
 
 ---
 

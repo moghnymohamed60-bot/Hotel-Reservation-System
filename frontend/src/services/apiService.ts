@@ -1,7 +1,7 @@
 // Base HTTP API Service with JWT Bearer Token interceptor
 
 export class ApiService {
-  private static BASE_URL = 'http://localhost:8080/api';
+  private static BASE_URL = '/api';
   private static TOKEN_KEY = 'hotel_app_jwt';
   private static USER_KEY = 'hotel_app_user';
 
